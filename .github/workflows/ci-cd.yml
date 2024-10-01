@@ -26,4 +26,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{secrets.DOCKER_USER/your-repo-name:latest}}  # Update accordingly
+          tags: ${{secrets.DOCKER_USER}}/gtechcloud7/mypipeline:latest  # Update accordingly
