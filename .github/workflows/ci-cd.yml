@@ -26,4 +26,25 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{secrets.DOCKER_USER}}/gtechcloud7/mypipeline:latest  # Update accordingly
+          tags: ${{secrets.DOCKER_USER}}/gtechcloud7/mypipeline:latest
+      - name: Deploy to Server
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}  # Your SSH key
+          SERVER_IP: ${{ secrets.SERVER_IP }}              # Your server IP address
+          USERNAME: ${{ secrets.SERVER_NAME }}          # Your SSH username
+        run: |
+          echo "$SSH_PRIVATE_KEY" > private_key
+          chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key $USERNAME@$SERVER_IP << 'EOF'
+            #!/bin/bash
+            
+            # Stop and remove the existing container (if any)
+            docker stop your-container-name || true
+            docker rm your-container-name || true
+
+            # Pull the latest image
+            docker pull your-dockerhub-username/your-repo-name:latest
+
+            # Run the new container
+            docker run -d --name your-container-name -p 3000:3000 your-dockerhub-username/your-repo-name:latest
+          EOF
